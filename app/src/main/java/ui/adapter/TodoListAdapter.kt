@@ -1,5 +1,6 @@
 package ui.adapter
 
+import android.graphics.Paint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,14 +10,12 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.guillaume.listmytodos.R
 import model.Todo
+import ui.Communicator
 
-class TodoListAdapter: RecyclerView.Adapter<TodoListViewHolder>() {
+class TodoListAdapter(private val communicator: Communicator): RecyclerView.Adapter<TodoListViewHolder>() {
 
     var todoList = listOf<Todo>()
-        set(value){
-            field = value
-            notifyDataSetChanged()
-        }
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TodoListViewHolder {
         return TodoListViewHolder.create(parent)
@@ -25,12 +24,13 @@ class TodoListAdapter: RecyclerView.Adapter<TodoListViewHolder>() {
     override fun onBindViewHolder(holder: TodoListViewHolder, position: Int) {
         val item = todoList[position]
 
-        val state = item.state
-        if(state) {
-            holder.checkBox.isChecked = true
-            //todo when a todo is done, it's placed at the bottom of the list et should be crossed out
-        } else {holder.checkBox.isChecked = false}
 
+        holder.checkBox.setOnClickListener {
+            item.state = holder.checkBox.isChecked
+            setState(item.state, holder.checkBox, holder.title)
+            communicator.updateList(todoList)
+        }
+        setState(item.state, holder.checkBox, holder.title)
         holder.title.text = item.title
 
         changeUrgentColor(item.urgent, holder.urgentColor)
@@ -39,6 +39,15 @@ class TodoListAdapter: RecyclerView.Adapter<TodoListViewHolder>() {
 
     override fun getItemCount() = todoList.size
 
+    fun setState(state: Boolean, box: CheckBox, text: TextView){
+        if(state){
+            box.isChecked = true
+            text.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
+        } else {
+            box.isChecked = false
+            text.paintFlags = 0
+        }
+    }
 
     fun changeUrgentColor(urgent: Int, image: ImageButton){
         when(urgent){
@@ -47,6 +56,7 @@ class TodoListAdapter: RecyclerView.Adapter<TodoListViewHolder>() {
             3 -> image.setBackgroundResource(R.drawable.round_red)
         }
     }
+
 
 }
 

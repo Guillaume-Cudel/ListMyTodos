@@ -14,7 +14,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.guillaume.listmytodos.R
 import com.guillaume.listmytodos.databinding.FragmentTodoListBinding
 import model.Todo
@@ -22,7 +21,7 @@ import ui.adapter.TodoListAdapter
 import viewmodel.TodoListViewModel
 
 
-class TodoListFragment : Fragment() {
+class TodoListFragment : Fragment(), Communicator {
 
     private lateinit var binding: FragmentTodoListBinding
     private lateinit var adapter: TodoListAdapter
@@ -35,9 +34,9 @@ class TodoListFragment : Fragment() {
     ): View {
         binding = FragmentTodoListBinding.inflate(layoutInflater)
 
-        todoListVM.getTodoList().observe(requireActivity(), Observer {
-            val list = it
-            configureRecyclerView(list)
+        todoListVM.getTodoList().observe(requireActivity(), Observer { todoList ->
+            configureRecyclerView()
+            setAdapter(todoList)
         })
 
         binding.fabAddTodo.setOnClickListener {
@@ -48,15 +47,22 @@ class TodoListFragment : Fragment() {
         return binding.root
     }
 
-    private fun configureRecyclerView(todos: List<Todo>){
+    private fun configureRecyclerView(){
         val recyclerView = binding.todoListRecyclerview
-        adapter = TodoListAdapter()
+        adapter = TodoListAdapter(this@TodoListFragment)
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(activity)
         recyclerView.addItemDecoration(
             DividerItemDecoration(requireActivity(), DividerItemDecoration.VERTICAL)
         )
-        adapter.todoList = todos
+
+    }
+
+    private fun setAdapter(todos: List<Todo>){
+        val sortListWithTime = todos.sortedBy { it.time }
+        val reversedSortedList = sortListWithTime.reversed()
+        val sortListWithBooleanAndTime = reversedSortedList.sortedBy { it.state }
+        adapter.todoList = sortListWithBooleanAndTime
     }
 
     private fun openAddTodoDialog(){
@@ -83,7 +89,7 @@ class TodoListFragment : Fragment() {
         saveButton.setOnClickListener {
             val titleResponse = title.editableText.toString()
             val descriptionResponse = description.editableText.toString()
-            if(titleResponse != "" && descriptionResponse != ""){
+            if(titleResponse != ""){
                 val time = System.currentTimeMillis()
                 val todo = Todo(titleResponse, descriptionResponse, false, color, time)
                 todoListVM.addTodoInList(todo)
@@ -103,6 +109,11 @@ class TodoListFragment : Fragment() {
             2 -> image.setBackgroundResource(R.drawable.round_orange)
             3 -> image.setBackgroundResource(R.drawable.round_red)
         }
+    }
+
+    override fun updateList(todos: List<Todo>) {
+        adapter.notifyDataSetChanged()
+        setAdapter(todos)
     }
 
 }
