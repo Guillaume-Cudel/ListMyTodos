@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">ListMyTodos</string>
+
+    <string name="test">Test</string>
+    <string name="urgent_color">Urgent color</string>
+    <string name="save_todo">Save todo</string>
+    <string name="todo_title">Todo title</string>
+    <string name="todo_description">Todo description</string>
+    <string name="urgent">Urgent</string>
+    <string name="fill_fields">Please fill title and description fields</string>
 </resources>
