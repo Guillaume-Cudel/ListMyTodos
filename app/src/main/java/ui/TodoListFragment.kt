@@ -25,7 +25,6 @@ class TodoListFragment : Fragment(), Communicator {
     private lateinit var adapter: TodoListAdapter
     private val todoListVM: TodoListViewModel by viewModels()
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -40,12 +39,10 @@ class TodoListFragment : Fragment(), Communicator {
         binding.fabAddTodo.setOnClickListener {
             openAddTodoDialog()
         }
-
-
         return binding.root
     }
 
-    private fun configureRecyclerView(){
+    private fun configureRecyclerView() {
         val recyclerView = binding.todoListRecyclerview
         adapter = TodoListAdapter(this@TodoListFragment)
         recyclerView.adapter = adapter
@@ -53,10 +50,9 @@ class TodoListFragment : Fragment(), Communicator {
         recyclerView.addItemDecoration(
             DividerItemDecoration(requireActivity(), DividerItemDecoration.VERTICAL)
         )
-
     }
 
-    private fun setAdapter(todos: List<Todo>){
+    private fun setAdapter(todos: List<Todo>) {
         val sortListWithTime = todos.sortedBy { it.time }
         val reversedSortedList = sortListWithTime.reversed()
         val sortListWithBooleanAndTime = reversedSortedList.sortedBy { it.state }
@@ -64,7 +60,7 @@ class TodoListFragment : Fragment(), Communicator {
     }
 
 
-    private fun openAddTodoDialog(){
+    private fun openAddTodoDialog() {
         val builder = AlertDialog.Builder(requireActivity()).create()
         val dialogView = layoutInflater.inflate(R.layout.add_todo_dialog, null)
         builder.setView(dialogView)
@@ -76,7 +72,7 @@ class TodoListFragment : Fragment(), Communicator {
         var color = 1
         urgentColor.setOnClickListener {
             color++
-            if(color > 3){
+            if (color > 3) {
                 color = 1
             }
             setColor(urgentColor, color)
@@ -85,22 +81,25 @@ class TodoListFragment : Fragment(), Communicator {
         saveButton.setOnClickListener {
             val titleResponse = title.editableText.toString()
             val descriptionResponse = description.editableText.toString()
-            if(titleResponse != ""){
+            if (titleResponse != "") {
                 val time = System.currentTimeMillis()
                 val todo = Todo(titleResponse, descriptionResponse, false, color, time)
                 todoListVM.addTodoInList(todo)
                 builder.dismiss()
             } else {
-                Toast.makeText(requireActivity(), getString(R.string.fill_fields), Toast.LENGTH_LONG).show()
+                Toast.makeText(
+                    requireActivity(),
+                    getString(R.string.fill_fields),
+                    Toast.LENGTH_LONG
+                ).show()
             }
         }
-
         builder.setCanceledOnTouchOutside(true)
         builder.show()
     }
 
-    private fun setColor(image: ImageButton, color: Int){
-        when(color){
+    private fun setColor(image: ImageButton, color: Int) {
+        when (color) {
             1 -> image.setBackgroundResource(R.drawable.round_green)
             2 -> image.setBackgroundResource(R.drawable.round_orange)
             3 -> image.setBackgroundResource(R.drawable.round_red)
@@ -116,7 +115,7 @@ class TodoListFragment : Fragment(), Communicator {
         openDetailTodoDialog(todo)
     }
 
-    private fun openDetailTodoDialog(todo: Todo){
+    private fun openDetailTodoDialog(todo: Todo) {
         val detailBuilder = AlertDialog.Builder(requireActivity()).create()
         val view = layoutInflater.inflate(R.layout.detail_todo_dialog, null)
         detailBuilder.setView(view)
@@ -130,6 +129,7 @@ class TodoListFragment : Fragment(), Communicator {
 
         urgentUpdate(urgentText, urgentWarning1, urgentWarning2, todo.urgent)
         displayTodo(titleText, descriptionText, urgentColor, todo)
+
         button.setOnClickListener {
             detailBuilder.dismiss()
         }
@@ -138,21 +138,27 @@ class TodoListFragment : Fragment(), Communicator {
         detailBuilder.show()
     }
 
-    private fun displayTodo(title: TextView, description: TextView, color: ImageView, todo: Todo){
+    private fun displayTodo(title: TextView, description: TextView, color: ImageView, todo: Todo) {
         title.text = todo.title
-        if(todo.description != "") description.text = todo.description
+        if (todo.description != "") description.text = todo.description
         else description.text = getString(R.string.no_description)
 
         adapter.changeUrgentColor(todo.urgent, color)
     }
 
-    private fun urgentUpdate(urgentText: TextView, warning1: ImageView, warning2: ImageView, urgentNumber: Int){
+    private fun urgentUpdate(
+        urgentText: TextView,
+        warning1: ImageView,
+        warning2: ImageView,
+        urgentNumber: Int
+    ) {
         warning1.isVisible = false
         warning2.isVisible = false
-        when(urgentNumber){
+        when (urgentNumber) {
             1 -> urgentText.text = getString(R.string.no_urgent)
             2 -> urgentText.text = getString(R.string.medium_urgent)
-            3 -> { urgentText.text = getString(R.string.very_urgent)
+            3 -> {
+                urgentText.text = getString(R.string.very_urgent)
                 warning1.isVisible = true
                 warning2.isVisible = true
             }
