@@ -8,4 +8,10 @@
     <string name="todo_description">Todo description</string>
     <string name="urgent">Urgent</string>
     <string name="fill_fields">Please fill title and description fields</string>
+    <string name="detail_urgent">URGENT</string>
+    <string name="ok">OK</string>
+    <string name="no_description">There are no description.</string>
+    <string name="no_urgent">No urgent</string>
+    <string name="medium_urgent">Medium urgent</string>
+    <string name="very_urgent">Very URGENT</string>
 </resources>

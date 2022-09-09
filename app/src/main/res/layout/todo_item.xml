@@ -15,12 +15,13 @@
 
     <TextView
         android:id="@+id/todo_title"
-        android:layout_width="230dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toEndOf="@id/todo_checkbox"
+        app:layout_constraintEnd_toStartOf="@id/todo_urgent_text"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginStart="20dp"
+        android:layout_marginHorizontal="10dp"
         android:text="test"
         android:textSize="18sp"/>
 
@@ -34,7 +35,7 @@
         android:text="@string/urgent"
         android:layout_marginEnd="10dp"/>
 
-    <ImageButton
+    <ImageView
         android:id="@+id/todo_urgent_state"
         android:layout_width="35dp"
         android:layout_height="35dp"
@@ -42,8 +43,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginEnd="15dp"
-        android:background="@drawable/round_green"
-        android:clickable="true"
-        android:focusable="true"/>
+        android:background="@drawable/round_green"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

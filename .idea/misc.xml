@@ -8,6 +8,7 @@
         <entry key="app/src/main/res/drawable/round_red.xml" value="0.1775" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.2682291666666667" />
         <entry key="app/src/main/res/layout/add_todo_dialog.xml" value="0.28229166666666666" />
+        <entry key="app/src/main/res/layout/detail_todo_dialog.xml" value="0.28229166666666666" />
         <entry key="app/src/main/res/layout/fragment_todo_list.xml" value="0.2682291666666667" />
         <entry key="app/src/main/res/layout/todo_item.xml" value="0.28229166666666666" />
       </map>

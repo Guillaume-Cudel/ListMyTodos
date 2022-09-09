@@ -6,10 +6,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageButton
-import android.widget.Toast
+import android.widget.*
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -65,6 +63,7 @@ class TodoListFragment : Fragment(), Communicator {
         adapter.todoList = sortListWithBooleanAndTime
     }
 
+
     private fun openAddTodoDialog(){
         val builder = AlertDialog.Builder(requireActivity()).create()
         val dialogView = layoutInflater.inflate(R.layout.add_todo_dialog, null)
@@ -73,10 +72,8 @@ class TodoListFragment : Fragment(), Communicator {
         val description = dialogView.findViewById<EditText>(R.id.add_dialog_description_edit)
         val urgentColor = dialogView.findViewById<ImageButton>(R.id.add_dialog_urgent_color)
         val saveButton = dialogView.findViewById<Button>(R.id.add_dialog_save_button)
-        builder.setView(dialogView)
 
         var color = 1
-
         urgentColor.setOnClickListener {
             color++
             if(color > 3){
@@ -84,7 +81,6 @@ class TodoListFragment : Fragment(), Communicator {
             }
             setColor(urgentColor, color)
         }
-
 
         saveButton.setOnClickListener {
             val titleResponse = title.editableText.toString()
@@ -116,4 +112,50 @@ class TodoListFragment : Fragment(), Communicator {
         setAdapter(todos)
     }
 
+    override fun passData(todo: Todo) {
+        openDetailTodoDialog(todo)
+    }
+
+    private fun openDetailTodoDialog(todo: Todo){
+        val detailBuilder = AlertDialog.Builder(requireActivity()).create()
+        val view = layoutInflater.inflate(R.layout.detail_todo_dialog, null)
+        detailBuilder.setView(view)
+        val titleText = view.findViewById<TextView>(R.id.detail_title)
+        val descriptionText = view.findViewById<TextView>(R.id.detail_description)
+        val urgentText = view.findViewById<TextView>(R.id.detail_urgent_text)
+        val urgentColor = view.findViewById<ImageView>(R.id.detail_urgent_color)
+        val urgentWarning1 = view.findViewById<ImageView>(R.id.detail_urgent_warning1)
+        val urgentWarning2 = view.findViewById<ImageView>(R.id.detail_urgent_warning2)
+        val button = view.findViewById<Button>(R.id.detail_button)
+
+        urgentUpdate(urgentText, urgentWarning1, urgentWarning2, todo.urgent)
+        displayTodo(titleText, descriptionText, urgentColor, todo)
+        button.setOnClickListener {
+            detailBuilder.dismiss()
+        }
+
+        detailBuilder.setCanceledOnTouchOutside(true)
+        detailBuilder.show()
+    }
+
+    private fun displayTodo(title: TextView, description: TextView, color: ImageView, todo: Todo){
+        title.text = todo.title
+        if(todo.description != "") description.text = todo.description
+        else description.text = getString(R.string.no_description)
+
+        adapter.changeUrgentColor(todo.urgent, color)
+    }
+
+    private fun urgentUpdate(urgentText: TextView, warning1: ImageView, warning2: ImageView, urgentNumber: Int){
+        warning1.isVisible = false
+        warning2.isVisible = false
+        when(urgentNumber){
+            1 -> urgentText.text = getString(R.string.no_urgent)
+            2 -> urgentText.text = getString(R.string.medium_urgent)
+            3 -> { urgentText.text = getString(R.string.very_urgent)
+                warning1.isVisible = true
+                warning2.isVisible = true
+            }
+        }
+    }
 }

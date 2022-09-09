@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.guillaume.listmytodos.R
@@ -35,11 +36,14 @@ class TodoListAdapter(private val communicator: Communicator): RecyclerView.Adap
 
         changeUrgentColor(item.urgent, holder.urgentColor)
 
+        holder.itemView.setOnClickListener {
+            communicator.passData(item)
+        }
     }
 
     override fun getItemCount() = todoList.size
 
-    fun setState(state: Boolean, box: CheckBox, text: TextView){
+    private fun setState(state: Boolean, box: CheckBox, text: TextView){
         if(state){
             box.isChecked = true
             text.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
@@ -49,7 +53,7 @@ class TodoListAdapter(private val communicator: Communicator): RecyclerView.Adap
         }
     }
 
-    fun changeUrgentColor(urgent: Int, image: ImageButton){
+     fun changeUrgentColor(urgent: Int, image: ImageView){
         when(urgent){
             1 -> image.setBackgroundResource(R.drawable.round_green)
             2 -> image.setBackgroundResource(R.drawable.round_orange)
@@ -64,7 +68,7 @@ class TodoListViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
 
     val checkBox: CheckBox = itemView.findViewById(R.id.todo_checkbox)
     val title: TextView = itemView.findViewById(R.id.todo_title)
-    val urgentColor: ImageButton = itemView.findViewById(R.id.todo_urgent_state)
+    val urgentColor: ImageView = itemView.findViewById(R.id.todo_urgent_state)
 
     companion object{
         fun create(parent: ViewGroup): TodoListViewHolder{
